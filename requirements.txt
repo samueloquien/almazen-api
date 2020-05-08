@@ -1,5 +1,6 @@
 aniso8601==8.0.0
 attrs==19.3.0
+behave==1.2.6
 click==7.1.2
 Flask==1.1.2
 flask-restx==0.2.0
@@ -8,6 +9,9 @@ itsdangerous==1.1.0
 Jinja2==2.11.2
 jsonschema==3.2.0
 MarkupSafe==1.1.1
+parse==1.15.0
+parse-type==0.5.2
+PyHamcrest==2.0.2
 pyrsistent==0.16.0
 pytz==2020.1
 six==1.14.0
