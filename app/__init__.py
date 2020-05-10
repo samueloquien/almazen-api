@@ -5,7 +5,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restx import Api
 
-def create_app():
+try:
     app = Flask('almazen-api')
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://AlmazenAPI:S1403p++@localhost/almazen-db'
 
@@ -32,3 +32,7 @@ def create_app():
     @app.route('/hi')
     def index():
         return "Hello, World!"
+
+except Exception as err:
+    app.logger.critical("Exception during application init: %s", err)
+    app.logger.exception("Exception")
