@@ -1,4 +1,4 @@
-from server import db
+from app import db
 
 class Language(db.Model):
     lang_id = db.Column(db.Integer, primary_key=True)
