@@ -34,15 +34,14 @@ try:
 
     @app.route('/langs/add/<newlang>')
     def addlang(newlang):
-        languages = db.session().query(Languages).all()
-        if newlang in [l.language_lang for l in languages]:
+        if newlang in langs():
             return 'Failed to add language ' + newlang + ' because it already exists.'
         app.logger.info('Adding language '+newlang)
         l = Languages(language_lang=newlang)
         app.logger.info('Language creaeted:', l)
         db.session().add(l)
         db.session().commit()
-        return 'OK'
+        return langs()
 
 except Exception as err:
     app.logger.critical("Exception during application init: %s", err)
