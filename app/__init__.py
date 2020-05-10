@@ -22,19 +22,27 @@ try:
 
     db = SQLAlchemy(app)
 
-    class User(db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        username = db.Column(db.String(80), unique=True, nullable=False)
-        email = db.Column(db.String(120), unique=True, nullable=False)
-        firstname = db.Column(db.String(80))
-        lastname = db.Column(db.String(80))
+    from app.models.languages import Languages
 
-        def __repr__(self):
-            return '<User %r>' % self.username
+    @app.route('/langs')
+    def langs():
+        languages = db.session().query(Languages).all()
+        result = ", ".join([l.language_lang for l in languages])
+        if not languages:
+            result = "no languages defined"
+        return result
 
-    @app.route('/hi')
-    def index():
-        return "Hello, World!"
+    @app.route('/langs/add/<newlang>')
+    def addlang(newlang):
+        languages = db.session().query(Languages).all()
+        if newlang in [l.language_lang for l in languages]:
+            return 'Failed to add language ' + newlang + ' because it already exists.'
+        app.logger.info('Adding language '+newlang)
+        l = Languages(language_lang=newlang)
+        app.logger.info('Language creaeted:', l)
+        db.session().add(l)
+        db.session().commit()
+        return 'OK'
 
 except Exception as err:
     app.logger.critical("Exception during application init: %s", err)
