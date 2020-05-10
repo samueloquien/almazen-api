@@ -1,13 +1,16 @@
 # server/__init__.py
 
-
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restx import Api
 
 try:
     app = Flask('almazen-api')
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://AlmazenAPI:S1403p++@localhost/almazen-db'
+    try:
+        app.config.from_object(os.environ['APP_SETTINGS'])
+    except KeyError:
+        app.config.from_object('config.DevelopmentConfig')
 
 
     api = Api(
