@@ -23,6 +23,7 @@ try:
     db = SQLAlchemy(app)
 
     from app.models.languages import Languages
+    from app.models.users import Users
 
     @app.route('/langs')
     def langs():
@@ -42,6 +43,25 @@ try:
         db.session().add(l)
         db.session().commit()
         return langs()
+
+    import json
+    @app.route('/users')
+    def users():
+        users = db.session().query(Users).all()
+        if not users:
+            return 'No users defined'
+        return ', '.join( [u.user_email for u in users] )
+
+    @app.route('/users/add/<email>/<password>')
+    def adduser(email,password):
+        if email in users():
+            return 'User already exists'
+        lang_id = db.session().query(Languages).filter(Languages.language_lang=='english').one().language_id
+        u = Users(user_email=email, user_password=password, user_language_id=lang_id )
+        db.session().add(u)
+        db.session().commit()
+        return users()
+
 
 except Exception as err:
     app.logger.critical("Exception during application init: %s", err)
