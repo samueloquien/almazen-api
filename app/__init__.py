@@ -11,6 +11,7 @@ try:
         app.config.from_object(os.environ['APP_SETTINGS'])
     except KeyError:
         app.config.from_object('config.DevelopmentConfig')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
     api = Api(
