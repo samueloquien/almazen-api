@@ -7,7 +7,7 @@ class Users(db.Model):
     user_create_datetime = db.Column(db.DateTime(3) , nullable=False)
     user_first_name = db.Column(db.String(45))
     user_last_name = db.Column(db.String(45))
-    user_address = db.Column(db.String(255), nullable=False)
+    user_address = db.Column(db.String(255))
     user_country = db.Column(db.String(45))
     user_city = db.Column(db.String(45))
     user_language_id = db.Column(db.Integer, db.ForeignKey('languages.language_id'), nullable=False)
