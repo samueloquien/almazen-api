@@ -9,4 +9,4 @@ class Products(db.Model):
     prod_barcode_id = db.Column(db.Integer, db.ForeignKey('barcodes.barcode_id'))
 
     def __repr__(self):
-        return '<User %r>' % self.prod_email
+        return '<Product %r>' % self.prod_name
