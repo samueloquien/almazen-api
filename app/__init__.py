@@ -53,12 +53,13 @@ try:
             return 'No users defined'
         return ', '.join( [u.user_email for u in users] )
 
+    from datetime import datetime
     @app.route('/users/add/<email>/<password>')
     def adduser(email,password):
         if email in users():
             return 'User already exists'
         lang_id = db.session().query(Languages).filter(Languages.language_lang=='english').one().language_id
-        u = Users(user_email=email, user_password=password, user_language_id=lang_id )
+        u = Users(user_email=email, user_password=password, user_language_id=lang_id, user_create_datetime=datetime.now() )
         db.session().add(u)
         db.session().commit()
         return users()
