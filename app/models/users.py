@@ -3,7 +3,7 @@ from app import db
 class Users(db.Model):
     user_id = db.Column(db.Integer, autoincrement='auto', primary_key=True)
     user_email = db.Column(db.String(255), unique=True, nullable=False)
-    user_password = db.Column(db.String(32), nullable=False)
+    user_password = db.Column(db.String(128))
     user_create_datetime = db.Column(db.DateTime(3) , nullable=False)
     user_first_name = db.Column(db.String(45))
     user_last_name = db.Column(db.String(45))
