@@ -9,6 +9,7 @@ class Config(object):
     SECRET_KEY = 'this-really-needs-to-be-changed'
     #SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     SQLALCHEMY_DATABASE_URI = 'mysql://AlmazenAPI:S1403p++@localhost/almazen-db'
+    SERVER_NAME = '127.0.0.1:5000'
 
 
 class ProductionConfig(Config):
