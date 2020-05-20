@@ -78,6 +78,18 @@ try:
             #return jsonify({ 'email': user.user_email }), 200#, {'Location': url_for('get_user', id = user.id, _external = True)}
             return json.dumps({ 'email': user.user_email })
 
+    # Export API as postman collection
+    try:
+        urlvars = False  # Build query strings in URLs
+        swagger = True  # Export Swagger specifications
+        with app.app_context():
+            data = api.as_postman(urlvars=urlvars, swagger=swagger)
+            with open('postman_collection.json', 'w') as f:
+                f.write(json.dumps(data, indent=2))
+    except Exception as err:
+        print('Unable to export as postman: ', err)
+        pass
+
 
 except Exception as err:
     app.logger.critical("Exception during application init: %s", err)
