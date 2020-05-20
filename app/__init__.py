@@ -1,9 +1,9 @@
 # server/__init__.py
 
 import os
-from flask import Flask
+from flask import Flask, request, jsonify, abort, Response
 from flask_sqlalchemy import SQLAlchemy
-from flask_restx import Api
+from flask_restx import Api, Resource
 
 try:
     app = Flask('almazen-api')
@@ -60,15 +60,23 @@ try:
         return ', '.join( [u.user_email for u in users] )
 
     from datetime import datetime
-    @app.route('/users/add/<email>/<password>')
-    def adduser(email,password):
-        if email in users():
-            return 'User already exists'
-        lang_id = db.session().query(Languages).filter(Languages.language_lang=='english').one().language_id
-        u = Users(user_email=email, user_password=password, user_language_id=lang_id, user_create_datetime=datetime.now() )
-        db.session().add(u)
-        db.session().commit()
-        return users()
+    import json
+    @api.route('/users/add')
+    class UsersEP(Resource):
+        def post(self, *args, **kwargs):
+            email = request.json.get('email')
+            password = request.json.get('password')
+            if email is None or password is None:
+                abort(404)#Response('Missing arguments email and password')) # missing arguments
+            if Users.query.filter_by(user_email=email).first() is not None:
+                abort(404)#Response('User {} already exists.'.format(email))) # existing user
+            lang_id = db.session().query(Languages).filter(Languages.language_lang=='en-US').one().language_id
+            user = Users(user_email=email, user_language_id=lang_id, user_create_datetime=datetime.now())
+            user.hash_password(password)
+            db.session.add(user)
+            db.session.commit()
+            #return jsonify({ 'email': user.user_email }), 200#, {'Location': url_for('get_user', id = user.id, _external = True)}
+            return json.dumps({ 'email': user.user_email })
 
 
 except Exception as err:

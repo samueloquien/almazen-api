@@ -1,3 +1,4 @@
+from passlib.apps import custom_app_context as pwd_context
 from app import db
 
 class Users(db.Model):
@@ -14,3 +15,9 @@ class Users(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.user_email
+
+    def hash_password(self, password):
+        self.user_password = pwd_context.encrypt(password)
+
+    def verify_password(self, password):
+        return pwd_context.verify(password, self.user_password)

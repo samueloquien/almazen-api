@@ -17,6 +17,7 @@ MarkupSafe==1.1.1
 mysqlclient==1.4.6
 parse==1.15.0
 parse-type==0.5.2
+passlib==1.7.2
 PyHamcrest==2.0.2
 pyrsistent==0.16.0
 python-dateutil==2.8.1
