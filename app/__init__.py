@@ -32,6 +32,8 @@ try:
     from app.models.products import Products
     from app.models.items import Items
 
+    from app.endpoints.users_ep import UsersEP
+
     @app.route('/langs')
     def langs():
         languages = db.session().query(Languages).all()
@@ -52,32 +54,6 @@ try:
         return langs()
 
     import json
-    @app.route('/users')
-    def users():
-        users = db.session().query(Users).all()
-        if not users:
-            return 'No users defined'
-        return ', '.join( [u.user_email for u in users] )
-
-    from datetime import datetime
-    import json
-    @api.route('/users/add')
-    class UsersEP(Resource):
-        def post(self, *args, **kwargs):
-            email = request.json.get('email')
-            password = request.json.get('password')
-            if email is None or password is None:
-                abort(404)#Response('Missing arguments email and password')) # missing arguments
-            if Users.query.filter_by(user_email=email).first() is not None:
-                abort(404)#Response('User {} already exists.'.format(email))) # existing user
-            lang_id = db.session().query(Languages).filter(Languages.language_lang=='en-US').one().language_id
-            user = Users(user_email=email, user_language_id=lang_id, user_create_datetime=datetime.now())
-            user.hash_password(password)
-            db.session.add(user)
-            db.session.commit()
-            #return jsonify({ 'email': user.user_email }), 200#, {'Location': url_for('get_user', id = user.id, _external = True)}
-            return json.dumps({ 'email': user.user_email })
-
     # Export API as postman collection
     try:
         urlvars = False  # Build query strings in URLs
