@@ -13,14 +13,14 @@ class UsersEP(Resource):
         users = db.session().query(Users).all()
         if not users:
             return 'No users defined'
-        return ', '.join( [u.user_email for u in users] )
+        return { 'users': [u.user_email for u in users] }
 
     def delete(self, *args, **kwargs):
         email = request.json.get('email')
         u = Users.query.filter_by(user_email=email).one()
         db.session.delete(u)
         db.session.commit()
-        return ', '.join( [u.user_email for u in Users.query.all()] )
+        return {'users': [u.user_email for u in Users.query.all()] }
 
     def post(self, *args, **kwargs):
         email = request.json.get('email')
@@ -35,4 +35,4 @@ class UsersEP(Resource):
         db.session.add(user)
         db.session.commit()
         #return jsonify({ 'email': user.user_email }), 200#, {'Location': url_for('get_user', id = user.id, _external = True)}
-        return json.dumps({ 'email': user.user_email })
+        return { 'email': user.user_email }

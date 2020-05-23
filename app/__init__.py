@@ -34,6 +34,9 @@ try:
 
     from app.endpoints.users_ep import UsersEP
 
+    from app.endpoints.common import JsonResponse
+    app.response_class = JsonResponse
+
     @app.route('/langs')
     def langs():
         languages = db.session().query(Languages).all()
