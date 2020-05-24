@@ -19,8 +19,8 @@ model_user = api.model('ModelUser', {
 
 
 
-@api.route('/users')
-class UsersEP(Resource):
+@api.route('/user')
+class UserEP(Resource):
 
     @api.marshal_with(model_user, envelope='user_profile')
     def get(self, *args, **kwargs):
