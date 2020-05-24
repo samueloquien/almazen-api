@@ -32,7 +32,7 @@ try:
     from app.models.products import Products
     from app.models.items import Items
 
-    from app.endpoints.users_ep import UsersEP
+    from app.endpoints.users_ep import UserEP
 
     from app.endpoints.common import JsonResponse
     app.response_class = JsonResponse
