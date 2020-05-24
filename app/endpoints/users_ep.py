@@ -1,19 +1,36 @@
 from flask import request, abort
-from flask_restx import Resource
+from flask_restx import Resource, fields
 from app import api, db
 from app.models.users import Users
 from app.models.languages import Languages
 from datetime import datetime
 import json
 
+model_user = api.model('ModelUser', {
+    'email': fields.String(attribute='user_email'),
+    'password': fields.String(attribute=lambda x: x.user_password[:15]+'...'),
+    'first_name': fields.String(attribute='user_first_name'),
+    'last_name': fields.String(attribute='user_last_name'),
+    'address': fields.String(attribute='user_address'),
+    'country': fields.String(attribute='user_country'),
+    'city': fields.String(attribute='user_city'),
+    'language': fields.String(attribute=lambda x: Languages.query.filter_by(language_id=x.user_language_id).one().language_lang),
+    })
+
+
+
 @api.route('/users')
 class UsersEP(Resource):
 
+    @api.marshal_with(model_user, envelope='user_profile')
     def get(self, *args, **kwargs):
-        users = db.session().query(Users).all()
-        if not users:
-            return 'No users defined'
-        return { 'users': [u.user_email for u in users] }
+        user_email = request.args.get('email')
+        try:
+            u = Users.query.filter_by(user_email=user_email).one()
+            return u
+        except:
+            api.logger.warn("no user found with email"+user_email)
+            abort(404)
 
     def delete(self, *args, **kwargs):
         email = request.json.get('email')
