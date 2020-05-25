@@ -1,5 +1,6 @@
 from flask import request, abort
 from flask_restx import Resource, fields
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import api, db
 from app.models.users import Users
 from app.models.languages import Languages
@@ -24,20 +25,25 @@ model_user = api.model('ModelUser', {
 class UserEP(Resource):
 
     @api.marshal_with(model_user, envelope='user_profile')
+    @jwt_required
     def get(self, *args, **kwargs):
-        user_email = request.args.get('email')
+        user_id = get_jwt_identity()
         try:
-            u = Users.query.filter_by(user_email=user_email).one()
+            u = Users.query.get(user_id)
             return u
         except:
-            api.abort(message='No user found with email '+user_email, code=HTTPStatus.FORBIDDEN)
+            api.abort(message='No user found', code=HTTPStatus.FORBIDDEN)
 
+    @jwt_required
     def delete(self, *args, **kwargs):
-        email = request.json.get('email')
-        u = Users.query.filter_by(user_email=email).one()
-        db.session.delete(u)
-        db.session.commit()
-        return {'users': [u.user_email for u in Users.query.all()] }
+        user_id = get_jwt_identity()
+        try:
+            u = Users.query.get(user_id)
+            db.session.delete(u)
+            db.session.commit()
+        except:
+            api.abort(message='No user found', code=HTTPStatus.FORBIDDEN)
+        return {'users': [{'id': u.user_id,'email':u.user_email} for u in Users.query.all()] }
 
     def post(self, *args, **kwargs):
         email = request.json.get('email')

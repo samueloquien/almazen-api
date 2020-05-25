@@ -4,6 +4,7 @@ import os
 from flask import Flask, request, jsonify, abort, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_restx import Api, Resource
+from flask_jwt_extended import JWTManager
 
 try:
     app = Flask('almazen-api')
@@ -12,6 +13,8 @@ try:
     except KeyError:
         app.config.from_object('config.DevelopmentConfig')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    jwt = JWTManager(app)
+
 
 
     api = Api(
@@ -33,6 +36,7 @@ try:
     from app.models.items import Items
 
     from app.endpoints.users_ep import UserEP
+    from app.endpoints.auth_ep import AuthLoginEP
 
     from app.endpoints.common import JsonResponse
     app.response_class = JsonResponse
