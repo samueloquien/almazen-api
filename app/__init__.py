@@ -34,6 +34,7 @@ try:
     from app.models.items_labels import ItemsLabels
     from app.models.products import Products
     from app.models.items import Items
+    from app.models.user_roles import UserRoles
 
     from app.endpoints.users_ep import UserEP
     from app.endpoints.auth_ep import AuthLoginEP

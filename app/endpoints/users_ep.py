@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import api, db
 from app.models.users import Users
 from app.models.languages import Languages
+from app.models.user_roles import UserRoles
 from datetime import datetime
 from http import HTTPStatus
 import json
@@ -53,7 +54,8 @@ class UserEP(Resource):
         if Users.query.filter_by(user_email=email).first() is not None:
             api.abort(message='User already exists.', code=HTTPStatus.FORBIDDEN)
         lang_id = db.session().query(Languages).filter(Languages.language_lang=='en-US').one().language_id
-        user = Users(user_email=email, user_language_id=lang_id, user_create_datetime=datetime.now())
+        role = UserRoles.query.filter_by(user_role='user').one().user_role_id
+        user = Users(user_email=email, user_language_id=lang_id, user_create_datetime=datetime.now(), user_role=role)
         user.hash_password(password)
         db.session.add(user)
         db.session.commit()
