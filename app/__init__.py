@@ -13,8 +13,13 @@ try:
     except KeyError:
         app.config.from_object('config.DevelopmentConfig')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    jwt = JWTManager(app)
 
+    jwt = JWTManager(app)
+    @jwt.user_claims_loader
+    def add_claims_to_access_token(identity):
+        role_id = Users.query.get(identity).user_role
+        role = UserRoles.query.get(role_id).user_role
+        return {'role': role}
 
 
     api = Api(
