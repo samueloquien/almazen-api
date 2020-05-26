@@ -28,11 +28,11 @@ class UserEP(Resource):
     @jwt_required
     def get(self, *args, **kwargs):
         user_id = get_jwt_identity()
-        try:
-            u = Users.query.get(user_id)
-            return u
-        except:
+        u = Users.query.get(user_id)
+        if u is None:
             api.abort(message='No user found', code=HTTPStatus.FORBIDDEN)
+        api.logger.info('email:'+u.user_email)
+        return u
 
     @jwt_required
     def delete(self, *args, **kwargs):
