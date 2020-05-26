@@ -71,3 +71,71 @@ class UserEP(Resource):
         db.session.add(user)
         db.session.commit()
         return {'access_token': create_access_token(user.user_id)}, 201
+
+    '''
+    Edit any user profile parameter. Request body may contain any subgroup
+    of this list: [email, password, first_name, last_name, address, country,
+    city, language, role] (or all of them). Some verification is performed
+    before writing to the DB, though:
+    - If editing password, the old password must be provided.
+    - If editing language or role, the values must be among those defined
+      in the languages and user_roles tables, respectively.
+    If any of these verifications fail, nothing is writen to the DB and the
+    request is aborted.
+    '''
+    @api.marshal_with(model_user, envelope='user_profile')
+    @jwt_required
+    def patch(self, *args, **kwargs):
+        props = '''email password first_name last_name 
+        address country city language role'''
+        props = props.split()
+        for prop in props:
+            new_val = request.json.get(prop)
+            if new_val is not None:
+                new_props[prop] = new_val
+
+        user_id = get_jwt_identity()
+        u = Users.query.get(user_id)
+
+        # Validate password update
+        if 'password' in new_props:
+            old_password = request.json.get('old_password')
+            if old_password is not None:
+                if not user.verify_password(old_password):
+                    api.abort(message='Invalid old password.', code=HTTPStatus.UNAUTHORIZED)
+        # Validate language
+        if 'language' in new_props:
+            lang_id = Languages.query.filter_by(language_lang=new_props['language']).one().language_id
+            if lang_id is None:
+                api.abort(message='Invalid new language.', code=HTTPStatus.FORBIDDEN)
+        # Validate user role
+        if 'role' in new_props:
+            role_id = UserRoles.query.filter_by(user_role=new_props['role']).one().user_role_id
+            if role_id is None:
+                api.abort(message='Invalid new language.', code=HTTPStatus.FORBIDDEN)
+
+        # Set values
+        if 'email' in new_props:
+            u.user_email = new_props['email']
+        if 'password' in new_props:
+            u.hash_password(new_props['password'])
+        if 'first_name' in new_props:
+            u.user_first_name = new_props['first_name']
+        if 'last_name' in new_props:
+            u.user_last_name = new_props['last_name']
+        if 'address' in new_props:
+            u.user_address = new_props['address']
+        if 'country' in new_props:
+            u.user_country = new_props['country']
+        if 'city' in new_props:
+            u.user_city = new_props['city']
+        if 'language' in new_props:
+            u.user_language_id = lang_id
+        if 'role' in new_props:
+            u.user_role_id = role_id
+
+        db.session.add(user)
+        db.session.commit()
+
+        return u
+
