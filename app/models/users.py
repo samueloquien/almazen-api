@@ -12,7 +12,7 @@ class Users(db.Model):
     user_country = db.Column(db.String(45))
     user_city = db.Column(db.String(45))
     user_language_id = db.Column(db.Integer, db.ForeignKey('languages.language_id'), nullable=False)
-    user_role = db.Column(db.Integer, db.ForeignKey('user_roles.user_role_id'))
+    user_role_id = db.Column(db.Integer, db.ForeignKey('user_roles.user_role_id'))
 
     def __repr__(self):
         return '<User %r>' % self.user_email

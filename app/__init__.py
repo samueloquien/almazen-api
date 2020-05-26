@@ -17,7 +17,7 @@ try:
     jwt = JWTManager(app)
     @jwt.user_claims_loader
     def add_claims_to_access_token(identity):
-        role_id = Users.query.get(identity).user_role
+        role_id = Users.query.get(identity).user_role_id
         role = UserRoles.query.get(role_id).user_role
         return {'role': role}
 

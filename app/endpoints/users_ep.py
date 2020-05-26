@@ -66,7 +66,7 @@ class UserEP(Resource):
             role = 'user'
         role_id = UserRoles.query.filter_by(user_role=role).one().user_role_id
 
-        user = Users(user_email=email, user_language_id=lang_id, user_create_datetime=datetime.now(), user_role=role_id)
+        user = Users(user_email=email, user_language_id=lang_id, user_create_datetime=datetime.now(), user_role_id=role_id)
         user.hash_password(password)
         db.session.add(user)
         db.session.commit()
