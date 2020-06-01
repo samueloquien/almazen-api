@@ -41,7 +41,7 @@ try:
     from app.models.items import Items
     from app.models.user_roles import UserRoles
 
-    from app.endpoints.users_ep import UserEP
+    from app.endpoints.user_ep import UserEP
     from app.endpoints.auth_ep import AuthLoginEP
 
     from app.endpoints.common import JsonResponse
