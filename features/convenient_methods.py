@@ -53,6 +53,10 @@ class TestConvenientMethods:
 		db.session.add(user)
 		db.session.commit()
 
+	def user_exists(self, email):
+		u = Users.query.filter_by(user_email=email).first()
+		return u is not None
+	
 
 	'''
 
