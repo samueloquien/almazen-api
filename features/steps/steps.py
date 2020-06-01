@@ -13,8 +13,7 @@ def step_impl(context, endpoint_name, email, password):
 
 @then('response contains a valid access token')
 def step_impl(context):
-	r = context._.responses[-1]
-	data = json.loads(r.data.decode())
+	data = context._.get_response_data()
 	assert_that(data, has_key('access_token') , 'response contains an access token')
 
 

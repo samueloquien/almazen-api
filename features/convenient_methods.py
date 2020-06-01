@@ -95,3 +95,10 @@ class TestConvenientMethods:
 		)
 		self.responses.append(response)
 		return response, json.loads(response.data.decode())
+
+	''' Returns response data as a Json object '''
+	def get_response_data(self, index= -1):
+		r = self.responses[index]
+		data = json.loads(r.data.decode())
+		return data
+
