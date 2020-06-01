@@ -23,16 +23,14 @@ class TestConvenientMethods:
 		print('Resetting DB...')
 
 		Users.query.delete()
-		db.session.execute('''ALTER TABLE users AUTO_INCREMENT = 0''')
+		db.session.execute('''ALTER TABLE users AUTO_INCREMENT = 1''')
 
 		Languages.query.delete()
-		db.session.execute('''ALTER TABLE languages AUTO_INCREMENT = 0''')
-		db.session.commit()
+		db.session.execute('''ALTER TABLE languages AUTO_INCREMENT = 1''')
 		db.session.add(Languages(language_lang='en-US'))
 
 		UserRoles.query.delete()
-		db.session.execute('''ALTER TABLE user_roles AUTO_INCREMENT = 0''')
-		db.session.commit()
+		db.session.execute('''ALTER TABLE user_roles AUTO_INCREMENT = 1''')
 		db.session.add(UserRoles(user_role='admin'))
 		db.session.add(UserRoles(user_role='user'))
 		
