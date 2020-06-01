@@ -19,6 +19,33 @@ class TestConvenientMethods:
 		self.__auth_token = ''
 		self.responses = []
 
+	def reset_db(self):
+		print('Resetting DB...')
+
+		Users.query.delete()
+		db.session.execute('''ALTER TABLE users AUTO_INCREMENT = 0''')
+
+		Languages.query.delete()
+		db.session.execute('''ALTER TABLE languages AUTO_INCREMENT = 0''')
+		db.session.commit()
+		db.session.add(Languages(language_lang='en-US'))
+
+		UserRoles.query.delete()
+		db.session.execute('''ALTER TABLE user_roles AUTO_INCREMENT = 0''')
+		db.session.commit()
+		db.session.add(UserRoles(user_role='admin'))
+		db.session.add(UserRoles(user_role='user'))
+		
+		db.session.commit()
+		print('Done. DB was reset.')
+
+
+	'''
+
+	Users
+	---------------------------------------------------------------------------
+	'''
+
 	def create_user(self, email, password, language_id=1, first_name=None, last_name=None,
 		address=None, country=None, city=None, role_id=2):
 		user = Users(user_email=email, user_create_datetime=datetime.now(), 
@@ -27,24 +54,13 @@ class TestConvenientMethods:
 		user.hash_password(password)
 		db.session.add(user)
 		db.session.commit()
-	
-	def reset_db(self):
-		print('Resetting DB...')
-		Users.query.delete()
-		db.session.execute('''ALTER TABLE users AUTO_INCREMENT = 0''')
-		Languages.query.delete()
-		db.session.execute('''ALTER TABLE languages AUTO_INCREMENT = 0''')
-		db.session.commit()
-		db.session.add(Languages(language_lang='en-US'))
-		UserRoles.query.delete()
-		db.session.execute('''ALTER TABLE user_roles AUTO_INCREMENT = 0''')
-		db.session.commit()
-		db.session.add(UserRoles(user_role='admin'))
-		db.session.add(UserRoles(user_role='user'))
-		db.session.commit()
-		print('Done. DB was reset.')
 
 
+	'''
+
+	API calls
+	---------------------------------------------------------------------------
+	'''
 
 	def call_api_get(self, endpoint_name, headers = {}):
 		headers['Authorization'] = 'Bearer ' + self.__auth_token
