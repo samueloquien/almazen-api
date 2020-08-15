@@ -1,13 +1,13 @@
 from flask import request, abort
 from flask_restx import Resource, fields
-from flask_jwt_extended import jwt_optional, jwt_required, get_jwt_identity, create_access_token, get_jwt_claims
-from app import api, db
+from app import api, db, myjwt
 from app.models.users import Users
 from app.models.languages import Languages
 from app.models.user_roles import UserRoles
 from datetime import datetime
 from http import HTTPStatus
 import json
+from flask_jwt_extended import jwt_required, jwt_optional, get_raw_jwt, get_jwt_identity
 
 model_user = api.model('ModelUser', {
     'email': fields.String(attribute='user_email'),
@@ -24,8 +24,8 @@ model_user = api.model('ModelUser', {
 @api.route('/user')
 class UserEP(Resource):
 
-    @api.marshal_with(model_user, envelope='user_profile')
     @jwt_required
+    @api.marshal_with(model_user, envelope='user_profile')
     def get(self, *args, **kwargs):
         user_id = get_jwt_identity()
         u = Users.query.get(user_id)
@@ -83,59 +83,78 @@ class UserEP(Resource):
     If any of these verifications fail, nothing is writen to the DB and the
     request is aborted.
     '''
-    @api.marshal_with(model_user, envelope='user_profile')
+    #@api.marshal_with(model_user, envelope='user_profile')
     @jwt_required
     def patch(self, *args, **kwargs):
-        props = '''email password first_name last_name 
-        address country city language role'''
-        props = props.split()
-        for prop in props:
-            new_val = request.json.get(prop)
-            if new_val is not None:
-                new_props[prop] = new_val
+        try:
+            api.logger.info('Editing user profile')
 
-        user_id = get_jwt_identity()
-        u = Users.query.get(user_id)
 
-        # Validate password update
-        if 'password' in new_props:
-            old_password = request.json.get('old_password')
-            if old_password is not None:
-                if not user.verify_password(old_password):
-                    api.abort(message='Invalid old password.', code=HTTPStatus.UNAUTHORIZED)
-        # Validate language
-        if 'language' in new_props:
-            lang_id = Languages.query.filter_by(language_lang=new_props['language']).one().language_id
-            if lang_id is None:
-                api.abort(message='Invalid new language.', code=HTTPStatus.FORBIDDEN)
-        # Validate user role
-        if 'role' in new_props:
-            role_id = UserRoles.query.filter_by(user_role=new_props['role']).one().user_role_id
-            if role_id is None:
-                api.abort(message='Invalid new language.', code=HTTPStatus.FORBIDDEN)
+            props = '''email password first_name last_name 
+            address country city language role'''
+            props = props.split()
+            new_props = {}
+            for prop in props:
+                new_val = request.json.get(prop)
+                if new_val is not None:
+                    new_props[prop] = new_val
+            api.logger.info('props:', props)
+            api.logger.info('new_props:', new_props)
+            api.logger.info('request.json:', request.json)
 
-        # Set values
-        if 'email' in new_props:
-            u.user_email = new_props['email']
-        if 'password' in new_props:
-            u.hash_password(new_props['password'])
-        if 'first_name' in new_props:
-            u.user_first_name = new_props['first_name']
-        if 'last_name' in new_props:
-            u.user_last_name = new_props['last_name']
-        if 'address' in new_props:
-            u.user_address = new_props['address']
-        if 'country' in new_props:
-            u.user_country = new_props['country']
-        if 'city' in new_props:
-            u.user_city = new_props['city']
-        if 'language' in new_props:
-            u.user_language_id = lang_id
-        if 'role' in new_props:
-            u.user_role_id = role_id
+            print('flag1')
+            print(get_raw_jwt())
+            print('flag2')
+            print(get_jwt_identity())
+            print('flag3')
+            user_id = get_jwt_identity()
+            print('flag4')
+            u = Users.query.get(user_id)
+            print(u)
 
-        db.session.add(user)
-        db.session.commit()
+            # Validate password update
+            if 'password' in new_props:
+                old_password = request.json.get('old_password')
+                if old_password is not None:
+                    if not user.verify_password(old_password):
+                        api.abort(message='Invalid old password.', code=HTTPStatus.UNAUTHORIZED)
+            # Validate language
+            if 'language' in new_props:
+                lang_id = Languages.query.filter_by(language_lang=new_props['language']).one().language_id
+                if lang_id is None:
+                    api.abort(message='Invalid new language.', code=HTTPStatus.FORBIDDEN)
+            # Validate user role
+            if 'role' in new_props:
+                role_id = UserRoles.query.filter_by(user_role=new_props['role']).one().user_role_id
+                if role_id is None:
+                    api.abort(message='Invalid new user role.', code=HTTPStatus.FORBIDDEN)
 
-        return u
+            # Set values
+            print('flag5')
+            if 'email' in new_props:
+                u.user_email = new_props['email']
+            if 'password' in new_props:
+                u.hash_password(new_props['password'])
+            if 'first_name' in new_props:
+                u.user_first_name = new_props['first_name']
+            if 'last_name' in new_props:
+                u.user_last_name = new_props['last_name']
+            if 'address' in new_props:
+                u.user_address = new_props['address']
+            if 'country' in new_props:
+                u.user_country = new_props['country']
+            if 'city' in new_props:
+                u.user_city = new_props['city']
+            if 'language' in new_props:
+                u.user_language_id = lang_id
+            if 'role' in new_props:
+                u.user_role_id = role_id
+
+            db.session.commit()
+            print('flag6')
+
+            return u
+        except:
+            print('Unhandled exception during call to patch')
+            return None
 

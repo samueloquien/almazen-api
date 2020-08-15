@@ -12,11 +12,13 @@ from app.models.user_roles import UserRoles
 
 from datetime import datetime
 import json
+from hamcrest import assert_that, equal_to
+#from flask import propagate_exceptions
 
 class TestConvenientMethods:
 	def __init__(self, client):
 		self.client = client
-		self.__auth_token = ''
+		self.access_token = ''
 		self.responses = []
 
 	def reset_db(self):
@@ -65,7 +67,8 @@ class TestConvenientMethods:
 	'''
 
 	def call_api_get(self, endpoint_name, headers = {}):
-		headers['Authorization'] = 'Bearer ' + self.__auth_token
+		if self.access_token:
+			headers['Authorization'] = 'Bearer ' + self.access_token
 		
 		response = self.client.get(
 			endpoint_name,
@@ -76,7 +79,8 @@ class TestConvenientMethods:
 		return response, json.loads(response.data.decode())
 	
 	def call_api_post(self, endpoint_name, body = {}, headers = {}):
-		headers['Authorization'] = 'Bearer ' + self.__auth_token
+		if self.access_token:
+			headers['Authorization'] = 'Bearer ' + self.access_token
 		
 		response = self.client.post(
 			endpoint_name,
@@ -86,9 +90,30 @@ class TestConvenientMethods:
 		)
 		self.responses.append(response)
 		return response, json.loads(response.data.decode())	
+	
+	def call_api_patch(self, endpoint_name, body = {}, headers = {}):
+		print('access_token:', self.access_token)
+		if self.access_token:
+			headers['Authorization'] = 'Bearer ' + self.access_token
+			headers['Content-Type'] = 'application/json'
+			print('setting headers:',headers)
+		print('config:',app.config)
+		
+		response = self.client.patch(
+			endpoint_name,
+			content_type = 'application/json',
+			data = json.dumps(body),
+			headers = headers
+		)
+		print('flag7')
+		#assert(1==2)
+		self.responses.append(response)
+		assert_that(2, equal_to(2), 'impossible is nothing')
+		return response, json.loads(response.data.decode())	
 
 	def call_api_delete(self, endpoint_name, headers = {}):
-		headers['Authorization'] = 'Bearer ' + self.__auth_token
+		if self.access_token:
+			headers['Authorization'] = 'Bearer ' + self.access_token
 		
 		response = self.client.delete(
 			endpoint_name,

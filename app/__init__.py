@@ -4,18 +4,22 @@ import os
 from flask import Flask, request, jsonify, abort, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_restx import Api, Resource
-from flask_jwt_extended import JWTManager
-
+from flask_jwt_extended import JWTManager, jwt_optional, jwt_required, get_jwt_identity, create_access_token, get_jwt_claims
 try:
     app = Flask('almazen-api')
     try:
+        print('os.environ[APP_SETTINGS]:',os.environ['APP_SETTINGS'])
         app.config.from_object(os.environ['APP_SETTINGS'])
     except KeyError:
-        app.config.from_object('config.DevelopmentConfig')
+        #app.config.from_object('config.DevelopmentConfig')
+        print('setting TestingConfig')
+        app.config.from_object('config.TestingConfig')
+        print('finished setting config to TestingConfig')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    print('config:',app.config)
 
-    jwt = JWTManager(app)
-    @jwt.user_claims_loader
+    myjwt = JWTManager(app)
+    @myjwt.user_claims_loader
     def add_claims_to_access_token(identity):
         role_id = Users.query.get(identity).user_role_id
         role = UserRoles.query.get(role_id).user_role
