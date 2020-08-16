@@ -1,16 +1,16 @@
 from flask import request, abort
-from flask_restx import Resource, fields
+from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import create_access_token
-from app import app, api, db
-from app.models.users import Users
-from app.models.languages import Languages
-from datetime import datetime
 from http import HTTPStatus
 import json
 
+from almazen.models import Users
+
+api = Namespace('auth', description='Endpoint for authentication')
+
 model_login = api.model('ModelLogin', {
     'access_token': fields.String(),
-    })
+    })  
 
 
 @api.route('/auth/login')

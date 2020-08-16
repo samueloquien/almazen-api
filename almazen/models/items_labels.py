@@ -1,4 +1,4 @@
-from app import db
+from almazen.db import db
 
 class ItemsLabels(db.Model):
     item_id = db.Column(db.Integer, primary_key=True)

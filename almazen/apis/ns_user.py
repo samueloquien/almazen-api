@@ -1,13 +1,14 @@
 from flask import request, abort
-from flask_restx import Resource, fields
-from app import api, db, myjwt
-from app.models.users import Users
-from app.models.languages import Languages
-from app.models.user_roles import UserRoles
+from flask_restx import Namespace, Resource, fields
 from datetime import datetime
 from http import HTTPStatus
 import json
-from flask_jwt_extended import jwt_required, jwt_optional, get_raw_jwt, get_jwt_identity
+from flask_jwt_extended import jwt_required, jwt_optional, get_raw_jwt, get_jwt_identity, create_access_token
+
+from almazen.models import Users, Languages, UserRoles
+from almazen.db import db
+
+api = Namespace('user', description='Endpoint for user management')
 
 model_user = api.model('ModelUser', {
     'email': fields.String(attribute='user_email'),
