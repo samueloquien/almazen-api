@@ -99,9 +99,9 @@ class UserEP(Resource):
                 new_val = request.json.get(prop)
                 if new_val is not None:
                     new_props[prop] = new_val
-            api.logger.info('props:', props)
-            api.logger.info('new_props:', new_props)
-            api.logger.info('request.json:', request.json)
+            api.logger.info('props:' + str(props))
+            api.logger.info('new_props:' + str(new_props))
+            api.logger.info('request.json:' + str(request.json))
 
             print('flag1')
             print(get_raw_jwt())
