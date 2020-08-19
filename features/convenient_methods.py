@@ -1,14 +1,5 @@
-from app import app, db
-
-from app.models.languages import Languages
-from app.models.users import Users
-from app.models.barcodes import Barcodes
-from app.models.images import Images
-from app.models.labels import Labels
-from app.models.items_labels import ItemsLabels
-from app.models.products import Products
-from app.models.items import Items
-from app.models.user_roles import UserRoles
+from almazen import db
+from almazen.models import *
 
 from datetime import datetime
 import json
