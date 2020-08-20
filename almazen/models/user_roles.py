@@ -1,4 +1,4 @@
-from app import db
+from almazen.db import db
 
 class UserRoles(db.Model):
     user_role_id = db.Column(db.Integer, autoincrement='auto', primary_key=True)

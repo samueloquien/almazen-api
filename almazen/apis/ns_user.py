@@ -1,13 +1,14 @@
 from flask import request, abort
-from flask_restx import Resource, fields
-from app import api, db, myjwt
-from app.models.users import Users
-from app.models.languages import Languages
-from app.models.user_roles import UserRoles
+from flask_restx import Namespace, Resource, fields
 from datetime import datetime
 from http import HTTPStatus
 import json
-from flask_jwt_extended import jwt_required, jwt_optional, get_raw_jwt, get_jwt_identity
+from flask_jwt_extended import jwt_required, jwt_optional, get_raw_jwt, get_jwt_identity, create_access_token
+
+from almazen.models import Users, Languages, UserRoles
+from almazen.db import db
+
+api = Namespace('user', description='Endpoint for user management')
 
 model_user = api.model('ModelUser', {
     'email': fields.String(attribute='user_email'),
@@ -18,12 +19,14 @@ model_user = api.model('ModelUser', {
     'country': fields.String(attribute='user_country'),
     'city': fields.String(attribute='user_city'),
     'language': fields.String(attribute=lambda x: Languages.query.filter_by(language_id=x.user_language_id).one().language_lang),
+    'role': fields.String(attribute=lambda x: UserRoles.query.filter_by(user_role_id=x.user_role_id).one().user_role)
     })
 
 
 @api.route('/user')
 class UserEP(Resource):
 
+    # Get user profile
     @jwt_required
     @api.marshal_with(model_user, envelope='user_profile')
     def get(self, *args, **kwargs):
@@ -34,6 +37,7 @@ class UserEP(Resource):
         api.logger.info('email:'+u.user_email)
         return u
 
+    # Delete user
     @jwt_required
     def delete(self, *args, **kwargs):
         user_id = get_jwt_identity()
@@ -45,6 +49,7 @@ class UserEP(Resource):
             api.abort(message='No user found', code=HTTPStatus.FORBIDDEN)
         return {'users': [{'id': u.user_id,'email':u.user_email} for u in Users.query.all()] }
 
+    # Create user
     @jwt_optional
     def post(self, *args, **kwargs):
         email = request.json.get('email')
@@ -83,7 +88,7 @@ class UserEP(Resource):
     If any of these verifications fail, nothing is writen to the DB and the
     request is aborted.
     '''
-    #@api.marshal_with(model_user, envelope='user_profile')
+    @api.marshal_with(model_user, envelope='user_profile')
     @jwt_required
     def patch(self, *args, **kwargs):
         try:
@@ -98,19 +103,12 @@ class UserEP(Resource):
                 new_val = request.json.get(prop)
                 if new_val is not None:
                     new_props[prop] = new_val
-            api.logger.info('props:', props)
-            api.logger.info('new_props:', new_props)
-            api.logger.info('request.json:', request.json)
+            api.logger.info('props:' + str(props))
+            api.logger.info('new_props:' + str(new_props))
+            api.logger.info('request.json:' + str(request.json))
 
-            print('flag1')
-            print(get_raw_jwt())
-            print('flag2')
-            print(get_jwt_identity())
-            print('flag3')
             user_id = get_jwt_identity()
-            print('flag4')
             u = Users.query.get(user_id)
-            print(u)
 
             # Validate password update
             if 'password' in new_props:
@@ -130,7 +128,6 @@ class UserEP(Resource):
                     api.abort(message='Invalid new user role.', code=HTTPStatus.FORBIDDEN)
 
             # Set values
-            print('flag5')
             if 'email' in new_props:
                 u.user_email = new_props['email']
             if 'password' in new_props:
@@ -151,7 +148,6 @@ class UserEP(Resource):
                 u.user_role_id = role_id
 
             db.session.commit()
-            print('flag6')
 
             return u
         except:

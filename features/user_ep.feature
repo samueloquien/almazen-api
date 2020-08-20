@@ -1,5 +1,4 @@
-
-Feature: Add users
+Feature: Users can be added/removed/edited
 
 Scenario: Attempting to create user without email and/or password
 	Given there exists no user with email "user01@mail.com" registered in the DB
@@ -23,7 +22,6 @@ Scenario: Creating a new user with default profile
 	 When the /user endpoint receives a POST request with email "user01@mail.com" and password "mypass"
 	 Then response contains a valid access token
 
-@wip
 Scenario: Editing user profile
 	Given a user with email "user01@mail.com" and password "mypass" is registered in the DB
 	  And we have a valid access token for user with email "user01@mail.com" and password "mypass"
@@ -32,5 +30,7 @@ Scenario: Editing user profile
 
 	Given we have a valid access token for user with email "user01@mail.com" and password "mypass"
 	 When the /user endpoint receives a GET request
-	 Then response contains email "user01@mail.comm", first_name "Johnn", last_name "Doe", address "Big house", country "Atlantida", city "Atlantic City", language "en-US", role "user"
+	 Then response contains email "user01@mail.com", first_name "John", last_name "Doe", address "Big house", country "Atlantida", city "Atlantic City", language "en-US", role "user"
 
+@wip
+Scenario: Deleting user profile

@@ -1,5 +1,5 @@
 from passlib.apps import custom_app_context as pwd_context
-from app import db
+from almazen.db import db
 
 class Users(db.Model):
     user_id = db.Column(db.Integer, autoincrement='auto', primary_key=True)

@@ -1,4 +1,4 @@
-from app import db
+from almazen.db import db
 
 class Products(db.Model):
     prod_id = db.Column(db.Integer, autoincrement='auto', primary_key=True)
