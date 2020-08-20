@@ -84,7 +84,7 @@ class UserEP(Resource):
     If any of these verifications fail, nothing is writen to the DB and the
     request is aborted.
     '''
-    #@api.marshal_with(model_user, envelope='user_profile')
+    @api.marshal_with(model_user, envelope='user_profile')
     @jwt_required
     def patch(self, *args, **kwargs):
         try:
@@ -103,15 +103,8 @@ class UserEP(Resource):
             api.logger.info('new_props:' + str(new_props))
             api.logger.info('request.json:' + str(request.json))
 
-            print('flag1')
-            print(get_raw_jwt())
-            print('flag2')
-            print(get_jwt_identity())
-            print('flag3')
             user_id = get_jwt_identity()
-            print('flag4')
             u = Users.query.get(user_id)
-            print(u)
 
             # Validate password update
             if 'password' in new_props:
@@ -131,7 +124,6 @@ class UserEP(Resource):
                     api.abort(message='Invalid new user role.', code=HTTPStatus.FORBIDDEN)
 
             # Set values
-            print('flag5')
             if 'email' in new_props:
                 u.user_email = new_props['email']
             if 'password' in new_props:
@@ -152,7 +144,6 @@ class UserEP(Resource):
                 u.user_role_id = role_id
 
             db.session.commit()
-            print('flag6')
 
             return u
         except:

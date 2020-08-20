@@ -64,42 +64,18 @@ def step_impl(context, expected_message):
 	r = context._.responses[-1]
 	response_message = context._.get_response_data()['message']
 	assert_that(response_message, equal_to(expected_message), 'response message is {}'.format(expected_message))
-	one = '1'
-	two = '2'
-	assert_that(one, equal_to(two), 'impossible is nothing')
 
 @then('response contains email "{email}", first_name "{first_name}", last_name "{last_name}", address "{address}", country "{country}", city "{city}", language "{language}", role "{role}"')
 def step_impl(context, email, first_name, last_name, address, country, city, language, role):
-	print('Debugging here')
 	data = context._.get_response_data()['user_profile']
-	print(data)
-	one = '1'
-	two = '2'
-	print('one:',one,'   two:',two)
-	assert_that(one, equal_to(two), 'impossible is nothing')
-	print('flag1')
-	#assert_that(one, equal_to(two))#, 'aritmetic order')
-	actual = data['email']
-	expected = email
-	assert_that(actual, equal_to(expected), 'response message is {}'.format(expected))
-	#assert_that(data.keys(), has_items('email,first_name'.split(',')), 'email is expected')
-	print('flag11')
-	assert_that(data['email'], equal_to(email), 'email is expected')
-	print('flag2')
-	print(data['first_name'])
-	print(first_name)
-	print('hi')
-	assert_that(data['first_name'], equal_to(first_name), 'first_name is expected')
-	print('flag3')
-	assert_that(data['last_name'], equal_to(last_name), 'last_name is expected')
-	print('flag4')
-	assert_that(data['address'], equal_to(address), 'address is expected')
-	print('flag5')
-	assert_that(data['country'], equal_to(country), 'country is expected')
-	print('flag6')
-	assert_that(data['city'], equal_to(city), 'city is expected')
-	assert_that(data['language'], equal_to(language), 'language is expected')
-	assert_that(data['role'], equal_to(role), 'role is expected')
+	assert_that(data['email'], equal_to(email), 'email is expected to match')
+	assert_that(data['first_name'], equal_to(first_name), 'first_name is expected to match')
+	assert_that(data['last_name'], equal_to(last_name), 'last_name is expected to match')
+	assert_that(data['address'], equal_to(address), 'address is expected to match')
+	assert_that(data['country'], equal_to(country), 'country is expected to match')
+	assert_that(data['city'], equal_to(city), 'city is expected to match')
+	assert_that(data['language'], equal_to(language), 'language is expected to match')
+	assert_that(data['role'], equal_to(role), 'role is expected to match')
 
 @given(u'a user is created with email {email} and password {passwd}')
 def step_impl(context, email, passwd):

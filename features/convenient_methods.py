@@ -4,7 +4,6 @@ from almazen.models import *
 from datetime import datetime
 import json
 from hamcrest import assert_that, equal_to
-#from flask import propagate_exceptions
 
 class TestConvenientMethods:
 	def __init__(self, client):
@@ -83,12 +82,9 @@ class TestConvenientMethods:
 		return response, json.loads(response.data.decode())	
 	
 	def call_api_patch(self, endpoint_name, body = {}, headers = {}):
-		print('access_token:', self.access_token)
 		if self.access_token:
 			headers['Authorization'] = 'Bearer ' + self.access_token
 			headers['Content-Type'] = 'application/json'
-			print('setting headers:',headers)
-		print('config:',app.config)
 		
 		response = self.client.patch(
 			endpoint_name,
@@ -96,10 +92,7 @@ class TestConvenientMethods:
 			data = json.dumps(body),
 			headers = headers
 		)
-		print('flag7')
-		#assert(1==2)
 		self.responses.append(response)
-		assert_that(2, equal_to(2), 'impossible is nothing')
 		return response, json.loads(response.data.decode())	
 
 	def call_api_delete(self, endpoint_name, headers = {}):
