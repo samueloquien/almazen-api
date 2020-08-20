@@ -1,4 +1,4 @@
-Feature: Add users
+Feature: Users can be added/removed/edited
 
 Scenario: Attempting to create user without email and/or password
 	Given there exists no user with email "user01@mail.com" registered in the DB
@@ -32,3 +32,5 @@ Scenario: Editing user profile
 	 When the /user endpoint receives a GET request
 	 Then response contains email "user01@mail.com", first_name "John", last_name "Doe", address "Big house", country "Atlantida", city "Atlantic City", language "en-US", role "user"
 
+@wip
+Scenario: Deleting user profile

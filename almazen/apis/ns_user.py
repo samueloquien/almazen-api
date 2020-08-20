@@ -26,6 +26,7 @@ model_user = api.model('ModelUser', {
 @api.route('/user')
 class UserEP(Resource):
 
+    # Get user profile
     @jwt_required
     @api.marshal_with(model_user, envelope='user_profile')
     def get(self, *args, **kwargs):
@@ -36,6 +37,7 @@ class UserEP(Resource):
         api.logger.info('email:'+u.user_email)
         return u
 
+    # Delete user
     @jwt_required
     def delete(self, *args, **kwargs):
         user_id = get_jwt_identity()
@@ -47,6 +49,7 @@ class UserEP(Resource):
             api.abort(message='No user found', code=HTTPStatus.FORBIDDEN)
         return {'users': [{'id': u.user_id,'email':u.user_email} for u in Users.query.all()] }
 
+    # Create user
     @jwt_optional
     def post(self, *args, **kwargs):
         email = request.json.get('email')
