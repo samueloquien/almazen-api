@@ -19,6 +19,7 @@ model_user = api.model('ModelUser', {
     'country': fields.String(attribute='user_country'),
     'city': fields.String(attribute='user_city'),
     'language': fields.String(attribute=lambda x: Languages.query.filter_by(language_id=x.user_language_id).one().language_lang),
+    'role': fields.String(attribute=lambda x: UserRoles.query.filter_by(user_role_id=x.user_role_id).one().user_role)
     })
 
 
