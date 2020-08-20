@@ -17,3 +17,11 @@ python manage.py runserver
 * python manage.py db init  (only once)
 * python manage.py db migrate
 * python manage.py db upgrade
+
+
+### Run tests
+
+``` PowerShell
+python -m behave -k --no-capture
+python -m behave --tags=@wip -k --no-capture
+```
