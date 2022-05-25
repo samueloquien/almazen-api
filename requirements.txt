@@ -20,7 +20,7 @@ parse==1.15.0
 parse-type==0.5.2
 passlib==1.7.2
 PyHamcrest==2.0.2
-PyJWT==1.7.1
+PyJWT==2.4.0
 pyrsistent==0.16.0
 python-dateutil==2.8.1
 python-editor==1.0.4
